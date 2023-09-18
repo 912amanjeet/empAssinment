@@ -2,15 +2,16 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { useSelector } from 'react-redux';
-
+import constanst from '../constants/constanst';
+import styles from '../navigation/styles'
 const CustomDrawerContent = () => {
   const employeeCount = useSelector((state) => state.employeeReducer.employees.length);
   const favoriteEmployees = useSelector((state) => state.favoriteEmployees);
 
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text style={{ fontSize: 18 }}>Employee Count: {employeeCount}</Text>
-      <Text style={{ fontSize: 18 }}>Favorite Employee Count: {favoriteEmployees.length}</Text>
+    <View style={styles.customDrawerView}>
+      <Text style={styles.drawerText}>{constanst.EMP_COUNT} {employeeCount}</Text>
+      <Text style={styles.drawerText}>{constanst.FAV_EMP_COUNT} {favoriteEmployees.length}</Text>
     </View>
   );
 };

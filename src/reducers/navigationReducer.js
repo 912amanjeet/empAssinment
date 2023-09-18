@@ -1,6 +1,5 @@
-// navigationReducer.js
 const initialState = {
-    initialRoute: 'AddEmployeeButton', // Set the initial route to AddEmployeeButton
+    initialRoute: 'AddEmployeeButton', 
   };
   
   const navigationReducer = (state = initialState, action) => {

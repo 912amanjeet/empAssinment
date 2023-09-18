@@ -1,4 +1,3 @@
-// actions.js
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const addEmployee = (employeeData) => async (dispatch) => {
@@ -19,7 +18,13 @@ export const addEmployee = (employeeData) => async (dispatch) => {
       payload: updatedData,
     });
   } catch (error) {
-    // Handle any errors here
+    // Handle errors here
     console.error('Error adding employee:', error);
   }
+};
+export const updateFavoriteEmployees = (favoriteEmployees) => {
+  return {
+    type: 'UPDATE_FAVORITE_EMPLOYEES',
+    payload: favoriteEmployees,
+  };
 };

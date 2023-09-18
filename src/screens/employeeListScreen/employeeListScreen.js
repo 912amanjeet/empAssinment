@@ -3,15 +3,19 @@ import { View, Text, FlatList, SafeAreaView, TouchableOpacity, Image,Alert } fro
 import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-const EmployeeListScreen = (props) => {
+import { useDispatch } from 'react-redux';
+import styles from '../employeeListScreen/style'
+import constanst from '../../constants/constanst';
 
+const EmployeeListScreen = () => {
+  const dispatch = useDispatch();
   const navigation = useNavigation();
-    const employeeCount = useSelector((state) => state.employeeReducer.employees.length);
-  
   const initialEmployees = useSelector((state) => state.employeeReducer.employees);
   const [employees, setEmployees] = useState([]);
   const [isDescending, setIsDescending] = useState(false); // Initially, set to ascending
   const [favoriteEmployees, setFavoriteEmployees] = useState([]);
+
+
   // Sort employees by first name and last name
   useEffect(() => {
     const sortedEmployees = [...initialEmployees].sort((a, b) => {
@@ -22,6 +26,9 @@ const EmployeeListScreen = (props) => {
     });
     setEmployees(sortedEmployees);
   }, [initialEmployees, isDescending]);
+
+
+  // for loadfavrouitre employe which is already marked favrouite
   useEffect(() => {
     const loadFavoriteEmployees = async () => {
       try {
@@ -36,25 +43,43 @@ const EmployeeListScreen = (props) => {
 
     loadFavoriteEmployees();
   }, []);
+
+    // for updatefavrouiteemployee 
   useEffect(() => {
     const saveFavoriteEmployees = async () => {
       try {
         await AsyncStorage.setItem('favoriteEmployees', JSON.stringify(favoriteEmployees));
+        dispatch({ type: 'UPDATE_FAVORITE_EMPLOYEES', payload: favoriteEmployees });
       } catch (error) {
         console.error('Error saving favorite employees:', error);
       }
     };
-
     saveFavoriteEmployees();
-  }, [favoriteEmployees]);
+  }, [favoriteEmployees,dispatch]);
 
+/// function for opening drawer
   const openDrawer = () => {
 navigation.openDrawer()
   };
+
+    // Define a function to extract initials from the employee's full name
+    const getInitials = (name) => {
+      const nameArray = name.split(' ');
+      return nameArray.map((word) => word[0]).join('').toUpperCase();
+    };
+  
+    //Toggle the sorting order
+    const toggleSortingOrder = () => {
+      setIsDescending(!isDescending);
+    };
+    // function for navigate to addemployeescreen
+    const navigateToAddEmployee = () => {
+      navigation.navigate('AddEmployeeScreen');
+    };
  
   // Define a function to render each item in the FlatList
   const renderItem = ({ item }) => {
-    console.log("itemtoggle",item,item.id)
+    /////// function for favrouite employee 
     const toggleFavorite = () => {
       setFavoriteEmployees(prevFavorites => {
         if (prevFavorites.includes(item.id)) {
@@ -67,72 +92,54 @@ navigation.openDrawer()
   const isEmployeeFavorite = () => {
     return favoriteEmployees.includes(item.id);
   };
-
-
-    
     return(
-    <View style={{ width: '90%',height:70, alignSelf: 'center', marginTop: '3%', flexDirection: 'row',alignItems:"center" ,borderRadius:10, shadowColor: '#000',backgroundColor:"white",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 2,
-    elevation: 2,}}>
-      <View style={{ width: 40, height: 40, borderRadius: 40 / 2, backgroundColor: 'green', justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={{ color: 'white', fontSize: 16 }}>{getInitials(`${item.firstName} ${item.lastName}`)}</Text>
+    <View style={styles.flatlistMainView}>
+      <View style={styles.flatlistCardStyle}>
+        <Text style={styles.circleText}>{getInitials(`${item.firstName} ${item.lastName}`)}</Text>
       </View>
-      <View style={{ marginLeft: 10 }}>
+      <View style={styles.informationView}>
      
-        <Text>Name: {item.firstName} {item.lastName}</Text>
-        <Text>Job Title: {item.jobTitle}</Text>
+        <Text style={styles.infoText}>{constanst.NAME} {item.firstName} {item.lastName}</Text>
+        <Text style={styles.infoText}>{constanst.JOB_TITLE} {item.jobTitle}</Text>
       </View>
-      <TouchableOpacity  style={{position:"absolute",right:10}} onPress={() => toggleFavorite(item.id)}>
-      <Image source={isEmployeeFavorite(item.id) ? require("../assets/starYellow.png") : require("../assets/star.png")} />
+      <TouchableOpacity  style={styles.starTouchableStyle} onPress={() => toggleFavorite(item.id)}>
+      <Image source={isEmployeeFavorite(item.id) ? require("../../assets/starYellow.png") : require("../../assets/star.png")} />
       </TouchableOpacity>
     </View>
   );
   }
-  // Define a function to extract initials from the employee's full name
-  const getInitials = (name) => {
-    const nameArray = name.split(' ');
-    return nameArray.map((word) => word[0]).join('').toUpperCase();
-  };
 
-  // Toggle the sorting order
-  const toggleSortingOrder = () => {
-    setIsDescending(!isDescending);
-  };
-  const navigateToAddEmployee = () => {
-    navigation.navigate('AddEmployeeScreen'); // Replace 'AddEmployeeListScreen' with the actual screen name
-  };
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View style={{ flex: 1 }}>
-        <View style={{height:100,backgroundColor:"green"}}>
-            <TouchableOpacity onPress={openDrawer}>
-            <Text>Open Drawer</Text>
-  
-          <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Employee Count: {employeeCount}</Text>
-          <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Favourite Count: {favoriteEmployees.length}</Text>
-          <TouchableOpacity onPress={toggleSortingOrder}>
-            <Text>{isDescending ? 'Sort Ascending' : 'Sort Descending'}</Text>
-          </TouchableOpacity>
+    <SafeAreaView style={styles.safeAreaViewStyle}>
+      <View style={styles.mainContainer}>
+        <View style={styles.headerMainstyle}>
+            <TouchableOpacity onPress={openDrawer} style={styles.menuTouchable}>
+          <Image source={require("../../assets/menu.png")}/>
+    
             </TouchableOpacity>
+            <View style={styles.dotTouchable}>
+                  <TouchableOpacity onPress={toggleSortingOrder} >
+                    <Text style={styles.sortText}>{constanst.SORT}</Text>
+          
+          </TouchableOpacity>
+          <Image source={require("../../assets/dots.png")}/>
+          </View>
         </View>
-
-       
-         
-   
+      
         <FlatList
-        contentContainerStyle={{bottom:20}}
+   
           data={employees}
           renderItem={renderItem}
           keyExtractor={(item) => item.id} 
           showsVerticalScrollIndicator={false}
+          style={{marginBottom:"10%"}}
         />
-           <TouchableOpacity onPress={navigateToAddEmployee} style={{ width:"40%", height: 40,backgroundColor:"green",alignSelf:"center",alignItems:"center",justifyContent:"center"}}>
-            <Text>Add Employee</Text>
+
+
+           <TouchableOpacity onPress={navigateToAddEmployee} style={styles.addEmployeeTouchable}>
+            <Text style={styles.buttonText}>{constanst.ADD_EMPLOYEE}</Text>
             </TouchableOpacity>
       </View>
-   
     </SafeAreaView>
   );
 };

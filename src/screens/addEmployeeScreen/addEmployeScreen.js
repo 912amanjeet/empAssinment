@@ -1,9 +1,11 @@
 // AddEmployeeScreen.js
 import React, { useState } from 'react';
-import { View, TextInput, Button ,SafeAreaView, TouchableOpacity,Text} from 'react-native';
+import { View, TextInput ,SafeAreaView, TouchableOpacity,Text} from 'react-native';
 import { useDispatch } from 'react-redux';
-import { addEmployee } from '../actions/addEmployeeAction';
+import { addEmployee } from '../../actions/addEmployeeAction';
+import styles from '../addEmployeeScreen/style'
 import uuid from 'react-native-uuid';
+import constanst from '../../constants/constanst';
 
 const AddEmployeeScreen = ({ navigation }) => {
   const [firstName, setFirstName] = useState('');
@@ -15,7 +17,7 @@ const AddEmployeeScreen = ({ navigation }) => {
 
   const saveEmployee = () => {
     if (!firstName || !jobTitle ) {
-        alert('Please fill in all mandfields before saving.');
+        alert(constanst.VALIDATION_MESSAGE);
         return;
       }
       const employeeId = uuid.v4();
@@ -31,30 +33,33 @@ const AddEmployeeScreen = ({ navigation }) => {
   };
 
   return (
-   <SafeAreaView style={{flex:1}}>
-    <View style={{flex:1,alignItems:"center",justifyContent:"center"}}>
-      <TextInput style={{width:"60%",height:40,borderBottomWidth:1,borderBottomColor:"green"}}
-        placeholder="First Name"
+   <SafeAreaView style={styles.safeAreaViewStyle}>
+    <View style={styles.mainView}>
+      <Text style={styles.headingStyle}>{constanst.EMPLOYEE_DETAILS}</Text>
+      <TextInput style={styles.addEmployeeTextinput}
+        placeholder={constanst.PLACEHOLDER.FIRST_NAME}
         value={firstName}
         onChangeText={(text) => setFirstName(text)}
       />
-      <TextInput style={{width:"60%",height:40,borderBottomWidth:1,borderBottomColor:"green"}}
-        placeholder="Last Name"
+      <TextInput style={styles.addEmployeeTextinput}
+        placeholder={constanst.PLACEHOLDER.LAST_NAME}
         value={lastName}
         onChangeText={(text) => setLastName(text)}
       />
-      <TextInput style={{width:"60%",height:40,borderBottomWidth:1,borderBottomColor:"green"}}
-        placeholder="Job Title"
+      <TextInput style={styles.addEmployeeTextinput}
+        placeholder={constanst.PLACEHOLDER.JOB_TITLE}
         value={jobTitle}
         onChangeText={(text) => setJobTitle(text)}
       />
-      <TextInput style={{width:"60%",height:40,borderBottomWidth:1,borderBottomColor:"green"}}
-        placeholder="Salary"
+      <TextInput style={styles.addEmployeeTextinput}
+        placeholder={constanst.PLACEHOLDER.Salary}
         value={salary}
         onChangeText={(text) => setSalary(text)}
       />
    
-      <TouchableOpacity  style={{width:"70%",height:40,backgroundColor:"green",marginTop:"10%",alignItems:"center",justifyContent:"center"}}onPress={saveEmployee}><Text>Save</Text></TouchableOpacity>
+      <TouchableOpacity  style={styles.saveTouchable}onPress={saveEmployee}>
+        <Text style={styles.saveText}>{constanst.SAVE}</Text>
+        </TouchableOpacity>
     </View>
     </SafeAreaView>
   );

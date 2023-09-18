@@ -1,7 +1,6 @@
-// employeeReducer.js
 const initialState = {
     employees: [], // Initialize with an empty array
-    
+    favoriteEmployees: [],
   };
   
   const employeeReducer = (state = initialState, action) => {
@@ -11,6 +10,13 @@ const initialState = {
           ...state,
           employees: action.payload,
         };
+      
+    case 'UPDATE_FAVORITE_EMPLOYEES':
+      return {
+        ...state,
+        favoriteEmployees: action.payload,
+      };
+
       default:
         return state;
     }
